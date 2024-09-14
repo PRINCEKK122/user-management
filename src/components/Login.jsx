@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const { Label, Control, Group } = Form;
 const { Header, Footer, Title, Body } = Modal;
@@ -10,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showModal, setShowModal] = useState(false);
   const users = useSelector((state) => state.users);
+  const navigate = useNavigate();
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -24,7 +26,9 @@ export default function Login() {
     );
 
     if (user) {
-      console.log(user);
+      localStorage.setItem(user.id, JSON.stringify(user));
+      navigate(`/users/${user.id}`);
+
     } else {
       handleShow();
     }
