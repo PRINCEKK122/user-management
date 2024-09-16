@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/users" element={<UsersList />} /> 
         <Route path="/users/add" element={<UserForm />} />
-        <Route path="/users/edit/:id" element={<UserForm />} />
+        <Route path="/users/update/:id" element={<UserForm />} />
         <Route path="/users/delete/:id" element={<UsersList />} />
       </Routes>
     </BrowserRouter>

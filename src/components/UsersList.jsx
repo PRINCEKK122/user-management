@@ -48,6 +48,7 @@ export default function UsersList() {
       <Table responsive hover borderless>
         <thead className="table-dark">
           <tr>
+            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Username</th>
@@ -58,6 +59,7 @@ export default function UsersList() {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
+              <td>{user.id}</td>
               <td>
                 {user.firstName} {user.lastName}
               </td>
@@ -65,7 +67,7 @@ export default function UsersList() {
               <td>{user.username}</td>
               <td>{user.role.toUpperCase()}</td>
               <td>
-                <Link to={`/users/edit/${user.id}`}>
+                <Link to={`/users/update/${user.id}`}>
                   <i className="bi bi-pen text-primary me-2" style={style}></i>
                 </Link>
                 <i
