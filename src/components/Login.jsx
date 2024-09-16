@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import CustomModal from "./Modal";
+// import CustomModal from "./Modal";
 
 const { Label, Control, Group } = Form;
 const { Header, Footer, Title, Body } = Modal;

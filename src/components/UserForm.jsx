@@ -20,11 +20,11 @@ export default function UserForm() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const roles = ["admin", "moderator", "user"];
-
   useEffect(() => {
     fetchUser(id);
   }, []);
+
+  const roles = ["admin", "moderator", "user"];
 
   const fetchUser = (id) => {
     if (id) {
@@ -34,6 +34,7 @@ export default function UserForm() {
       });
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
