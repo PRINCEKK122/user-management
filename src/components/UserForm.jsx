@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { users } from "../data/users";
-import { addUser } from "../data/UserReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, editUser } from "../data/UserReducer";
 import { useNavigate, useParams } from "react-router-dom";
 
 const { Label, Control, Group, Select } = Form;
@@ -14,26 +13,41 @@ export default function UserForm() {
     email: "",
     username: "",
     password: "",
-    role: "",
+    role: "admin",
   });
+  const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
   const roles = ["admin", "moderator", "user"];
 
+  useEffect(() => {
+    fetchUser(id);
+  }, []);
+
+  const fetchUser = (id) => {
+    if (id) {
+      const existingUser = users.find((u) => u.id === Number(id));
+      setUser((u) => {
+        return { ...u, ...existingUser };
+      });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (id) {
-        const existingUser = users.find(u => u.id === Number(id));
-        setUser(u => ({...u, ...existingUser}));
-        console.log(user);
+      console.log("Editing the user", user);
+      dispatch(editUser(user));
     } else {
-        dispatch(addUser({ ...user, id: users.total + 1 }));
-        navigate(`/users/${localStorage.getItem(user.id)}`);
+      console.log(user);
+      dispatch(addUser({...user, id: users.length + 1 }));
     }
+    navigate("/users");
   };
+
   return (
     <Form className="container mt-3 w-25" onSubmit={handleSubmit}>
       <Group className="mb-3" controlId="firstNameId">

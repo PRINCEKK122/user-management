@@ -9,19 +9,26 @@ const userSlice = createSlice({
       state.push(action.payload);
     },
     editUser: (state, action) => {
-        const {id, firstName, lastName, email, username, role} = action.payload;
-        const updatedUser = state.find(u => u.id === Number(id));
+      const { id, firstName, lastName, email, username, role } = action.payload;
 
-        if (updatedUser) {
-            updatedUser.firstName = firstName;
-            updatedUser.lastName = lastName;
-            updatedUser.email = email;
-            updatedUser.username = username;
-            updatedUser.role = role;
-        }
-    }
+      const updatedUser = state.find((u) => u.id === id);
+      if (updatedUser) {
+        updatedUser.firstName = firstName;
+        updatedUser.lastName = lastName;
+        updatedUser.email = email;
+        updatedUser.username = username;
+        updatedUser.role = role;
+      }
+    },
+    deleteUser: (state, action) => {
+      const { id } = action.payload;
+      const user = state.find((u) => u.id === id);
+      if (user) {
+        return state.filter(u => u.id !== id);
+      }
+    },
   },
 });
 
-export const { addUser } = userSlice.actions;
+export const { addUser, editUser, deleteUser } = userSlice.actions;
 export default userSlice.reducer;

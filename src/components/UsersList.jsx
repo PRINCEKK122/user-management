@@ -1,19 +1,23 @@
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Button, Table } from "react-bootstrap";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { deleteUser } from "../data/UserReducer";
 
 export default function UsersList() {
   const users = useSelector((state) => state.users);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+  // Getting the last key in the local storage
+  const userId = localStorage.key(localStorage.length - 1);
 
-  const { firstName, image } = JSON.parse(localStorage.getItem(Number(id)));
+  const { firstName, image } = JSON.parse(localStorage.getItem(userId));
   const style = { cursor: "pointer" };
+
+  const handleDelete = (id) => {
+    dispatch(deleteUser({id}));
+  }
 
   return (
     <div className="container">
@@ -62,15 +66,12 @@ export default function UsersList() {
               <td>{user.role.toUpperCase()}</td>
               <td>
                 <Link to={`/users/edit/${user.id}`}>
-                  <i
-                    className="bi bi-pen text-primary me-2"
-                    style={style}
-                  ></i>
+                  <i className="bi bi-pen text-primary me-2" style={style}></i>
                 </Link>
                 <i
                   className="bi bi-trash3 text-danger"
                   style={style}
-                  onClick={() => console.log("deleting")}
+                  onClick={() => handleDelete(user.id)}
                 ></i>
               </td>
             </tr>

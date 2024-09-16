@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CustomModal from "./Modal";
 
 const { Label, Control, Group } = Form;
 const { Header, Footer, Title, Body } = Modal;
@@ -27,7 +28,7 @@ export default function Login() {
 
     if (user) {
       localStorage.setItem(user.id, JSON.stringify(user));
-      navigate(`/users/${user.id}`);
+      navigate(`/users`);
 
     } else {
       handleShow();
@@ -65,6 +66,8 @@ export default function Login() {
           </Button>
         </Group>
       </Form>
+      {/* TODO */}
+      {/* <CustomModal /> */} 
 
       <Modal show={showModal} onHide={handleClose} backdrop="static">
         <Header closeButton>
