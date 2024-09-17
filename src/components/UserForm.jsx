@@ -20,21 +20,22 @@ export default function UserForm() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    fetchUser(id);
-  }, []);
-
-  const roles = ["admin", "moderator", "user"];
-
   const fetchUser = (id) => {
     if (id) {
       const existingUser = users.find((u) => u.id === Number(id));
-      setUser((u) => {
-        return { ...u, ...existingUser };
-      });
+
+      if (existingUser) {
+        setUser((u) => ({ ...u, ...existingUser }));
+      }
     }
   };
 
+  useEffect(() => {
+    fetchUser(id);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, users]);
+
+  const roles = ["admin", "moderator", "user"];
 
   const handleSubmit = (e) => {
     e.preventDefault();
