@@ -43,7 +43,8 @@ export default function UserForm() {
     if (id) {
       dispatch(editUser(user));
     } else {
-      dispatch(addUser({ ...user, id: users.length + 1 }));
+      const newId = Math.max(...users.map(u => u.id));
+      dispatch(addUser({ ...user, id: newId }));
     }
     navigate("/users");
   };
