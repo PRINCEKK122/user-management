@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, editUser } from "../data/UserReducer";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -15,6 +15,7 @@ export default function UserForm() {
     password: "",
     role: "admin",
   });
+  const [errors, setErrors] = useState({});
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,17 +37,35 @@ export default function UserForm() {
   }, [id, users]);
 
   const roles = ["admin", "moderator", "user"];
+  const validate = () => {
+    const newErrors = {};
+    if (!user.firstName) newErrors.firstName = "First name is required.";
+
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const formErrors = validate();
+    const hasErrors = Object.keys(formErrors).length > 0;
+    if (hasErrors) {
+      setErrors(formErrors);
+      return;
+    }
+
     if (id) {
       dispatch(editUser(user));
     } else {
-      const newId = Math.max(...users.map(u => u.id)) + 1;
+      const newId = Math.max(...users.map((u) => u.id)) + 1;
       dispatch(addUser({ ...user, id: newId }));
     }
-    navigate("/users"); 
+    navigate("/users");
+  };
+
+  const handleChange = (field, value) => {
+    setUser((u) => ({ ...u, [field]: value }));
+    setErrors((e) => ({ ...e, [field]: "" })); // Clearing the error on input change
   };
 
   return (
@@ -64,13 +83,13 @@ export default function UserForm() {
             type="text"
             placeholder="Enter first name"
             value={user.firstName}
-            onChange={(e) =>
-              setUser((u) => ({
-                ...u,
-                firstName: e.target.value,
-              }))
-            }
+            onChange={(e) => handleChange("firstName", e.target.value)}
           />
+          {errors.firstName && (
+            <Alert variant="danger" className="mt-1">
+              {errors.firstName}
+            </Alert>
+          )}
         </Group>
 
         <Group className="mb-3" controlId="lastNameId">
@@ -91,9 +110,7 @@ export default function UserForm() {
             type="email"
             placeholder="Enter Email"
             value={user.email}
-            onChange={(e) =>
-              setUser((u) => ({ ...u, email: e.target.value }))
-            }
+            onChange={(e) => setUser((u) => ({ ...u, email: e.target.value }))}
           />
         </Group>
 
