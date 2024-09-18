@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Table } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../data/UserReducer";
+import CustomModal from "./CustomModal";
 
 export default function UsersList() {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(-1);
+  const [logoutModal, setLogoutModal] = useState(false);
   const users = useSelector((state) => state.users);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -15,8 +20,55 @@ export default function UsersList() {
   const { firstName, image } = JSON.parse(localStorage.getItem(userId));
   const style = { cursor: "pointer" };
 
+  const handleClose = () => {
+    setSelectedUserId(-1);
+    setShowModal(false);
+  };
+  const handleShow = (id) => {
+    setSelectedUserId(id);
+    setShowModal(true);
+  };
+
   const handleDelete = (id) => {
     dispatch(deleteUser({ id }));
+    handleClose();
+  };
+
+  const modalOptions = {
+    title: "Confirmation",
+    body: `Are you sure you want delete this user with ID ${selectedUserId}?`,
+    footerBtns: [
+      {
+        label: "Cancel",
+        variant: "secondary",
+        onClick: handleClose,
+      },
+      {
+        label: "Yes",
+        variant: "danger",
+        onClick: () => handleDelete(selectedUserId),
+      },
+    ],
+  };
+
+  const logoutOptions = {
+    title: "Log out",
+    body: "Is sad to see you go, are you sure you want to logout?",
+    footerBtns: [
+      {
+        label: "No",
+        variant: "secondary",
+        onClick: () => setLogoutModal(false),
+      },
+      {
+        label: "Yes",
+        variant: "primary",
+        onClick: () => {
+          setLogoutModal(false);
+          navigate("/");
+        },
+      },
+    ],
   };
 
   const capitalizeFirstLetter = (word) => {
@@ -32,7 +84,10 @@ export default function UsersList() {
           style={{ width: 50, height: 50 }}
         />
         <span className="fs-4 fw-light mx-2">Welcome, {firstName}!</span>
-        <Button variant="outline-secondary" onClick={() => navigate("/")}>
+        <Button
+          variant="outline-secondary"
+          onClick={() => setLogoutModal(true)}
+        >
           Logout
         </Button>
       </div>
@@ -78,13 +133,29 @@ export default function UsersList() {
                 <i
                   className="bi bi-trash3 text-danger"
                   style={style}
-                  onClick={() => handleDelete(user.id)}
+                  onClick={() => {
+                    handleShow(user.id);
+                  }}
                 ></i>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <CustomModal
+        showModal={showModal}
+        options={modalOptions}
+        handleClose={handleClose}
+      />
+
+      {logoutModal && (
+        <CustomModal
+          showModal={logoutModal}
+          options={logoutOptions}
+          handleClose={() => setLogoutModal(false)}
+        />
+      )}
     </div>
   );
 }
