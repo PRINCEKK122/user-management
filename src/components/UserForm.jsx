@@ -32,7 +32,7 @@ export default function UserForm() {
 
   useEffect(() => {
     fetchUser(id);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, users]);
 
   const roles = ["admin", "moderator", "user"];
@@ -41,10 +41,8 @@ export default function UserForm() {
     e.preventDefault();
 
     if (id) {
-      console.log("Editing the user", user);
       dispatch(editUser(user));
     } else {
-      console.log(user);
       dispatch(addUser({ ...user, id: users.length + 1 }));
     }
     navigate("/users");
@@ -66,7 +64,10 @@ export default function UserForm() {
             placeholder="Enter first name"
             value={user.firstName}
             onChange={(e) =>
-              setUser((u) => ({ ...u, firstName: e.target.value }))
+              setUser((u) => ({
+                ...u,
+                firstName: e.target.value,
+              }))
             }
           />
         </Group>
@@ -89,7 +90,9 @@ export default function UserForm() {
             type="email"
             placeholder="Enter Email"
             value={user.email}
-            onChange={(e) => setUser((u) => ({ ...u, email: e.target.value }))}
+            onChange={(e) =>
+              setUser((u) => ({ ...u, email: e.target.value }))
+            }
           />
         </Group>
 

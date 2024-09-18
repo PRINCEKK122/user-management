@@ -24,7 +24,7 @@ const userSlice = createSlice({
       const { id } = action.payload;
       const user = state.find((u) => u.id === id);
       if (user) {
-        return state.filter(u => u.id !== id);
+        return state.filter((u) => u.id !== id);
       }
     },
   },

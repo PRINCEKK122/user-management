@@ -16,8 +16,12 @@ export default function UsersList() {
   const style = { cursor: "pointer" };
 
   const handleDelete = (id) => {
-    dispatch(deleteUser({id}));
-  }
+    dispatch(deleteUser({ id }));
+  };
+
+  const capitalizeFirstLetter = (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  };
 
   return (
     <div className="container">
@@ -61,10 +65,11 @@ export default function UsersList() {
             <tr key={user.id}>
               <td>{user.id}</td>
               <td>
-                {user.firstName} {user.lastName}
+                {capitalizeFirstLetter(user.firstName)}{" "}
+                {capitalizeFirstLetter(user.lastName)}
               </td>
-              <td>{user.email}</td>
-              <td>{user.username}</td>
+              <td>{user.email.toLowerCase()}</td>
+              <td>{user.username.toLowerCase()}</td>
               <td>{user.role.toUpperCase()}</td>
               <td>
                 <Link to={`/users/update/${user.id}`}>

@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { Form, Button, Modal } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import CustomModal from "./Modal";
+import CustomModal from "./CustomModal";
 
 const { Label, Control, Group } = Form;
-const { Header, Footer, Title, Body } = Modal;
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const modalOptions = {
+    title: "Invalid Credentials",
+    body: "User not found, enter valid credentials!",
+  };
   const users = useSelector((state) => state.users);
   const navigate = useNavigate();
 
@@ -29,7 +32,6 @@ export default function Login() {
     if (user) {
       localStorage.setItem(user.id, JSON.stringify(user));
       navigate(`/users`);
-
     } else {
       handleShow();
     }
@@ -66,20 +68,12 @@ export default function Login() {
           </Button>
         </Group>
       </Form>
-      {/* TODO */}
-      {/* <CustomModal /> */} 
 
-      <Modal show={showModal} onHide={handleClose} backdrop="static">
-        <Header closeButton>
-          <Title>Invalid Credentials</Title>
-        </Header>
-        <Body>User not found, enter valid credentials!</Body>
-        <Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Footer>
-      </Modal>
+      <CustomModal
+        handleClose={handleClose}
+        options={modalOptions}
+        showModal={showModal}
+      />
     </div>
   );
 }
