@@ -35,7 +35,7 @@ export default function UsersList() {
   };
 
   const modalOptions = {
-    title: "Confirmation",
+    title: "Delete User",
     body: `Are you sure you want delete this user with ID ${selectedUserId}?`,
     footerBtns: [
       {
