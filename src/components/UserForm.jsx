@@ -88,7 +88,7 @@ export default function UserForm() {
             placeholder="Enter first name"
             value={user.firstName}
             onChange={(e) =>
-              setUser((u) => ({ ...u, firstName: e.target.value }))
+              setUser((u) => ({ ...u, firstName: e.target.value.trim() }))
             }
             required
             minLength={3}
@@ -105,7 +105,7 @@ export default function UserForm() {
             required
             minLength={3}
             onChange={(e) =>
-              setUser((u) => ({ ...u, lastName: e.target.value }))
+              setUser((u) => ({ ...u, lastName: e.target.value.trim() }))
             }
           />
           {feedback()}
@@ -118,7 +118,7 @@ export default function UserForm() {
             placeholder="Enter Email"
             value={user.email}
             required
-            onChange={(e) => setUser((u) => ({ ...u, email: e.target.value }))}
+            onChange={(e) => setUser((u) => ({ ...u, email: e.target.value.trim() }))}
           />
           <Feedback>Looks good</Feedback>
           <Feedback type="invalid">Please enter a valid email</Feedback>
@@ -148,7 +148,7 @@ export default function UserForm() {
             required
             minLength={6}
             onChange={(e) =>
-              setUser((u) => ({ ...u, password: e.target.value }))
+              setUser((u) => ({ ...u, password: e.target.value.trim() }))
             }
           />
           {feedback(6)}
@@ -166,7 +166,6 @@ export default function UserForm() {
               </option>
             ))}
           </Select>
-          <Feedback>Looks good!</Feedback>
         </Group>
 
         <Group className="d-grid">
