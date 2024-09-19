@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, editUser } from "../data/UserReducer";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
 const { Label, Control, Group, Select } = Form;
+const { Feedback } = Control;
 
 export default function UserForm() {
   const [user, setUser] = useState({
@@ -15,11 +16,22 @@ export default function UserForm() {
     password: "",
     role: "admin",
   });
-  const [errors, setErrors] = useState({});
+  const [validated, setValidated] = useState(false);
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const feedback = (minLength) => {
+    return (
+      <>
+        <Feedback>Looks good!</Feedback>
+        <Feedback type="invalid">
+          Field is required and should have minimum of {minLength} characters
+        </Feedback>
+      </>
+    );
+  };
 
   const fetchUser = (id) => {
     if (id) {
@@ -37,35 +49,22 @@ export default function UserForm() {
   }, [id, users]);
 
   const roles = ["admin", "moderator", "user"];
-  const validate = () => {
-    const newErrors = {};
-    if (!user.firstName) newErrors.firstName = "First name is required.";
-
-    return newErrors;
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    const formErrors = validate();
-    const hasErrors = Object.keys(formErrors).length > 0;
-    if (hasErrors) {
-      setErrors(formErrors);
-      return;
+    setValidated(true);
+
+    if (e.target.checkValidity()) {
+      if (id) {
+        dispatch(editUser(user));
+      } else {
+        const newId = Math.max(...users.map((u) => u.id)) + 1;
+        dispatch(addUser({ ...user, id: newId }));
+      }
+      navigate("/users");
     }
-
-    if (id) {
-      dispatch(editUser(user));
-    } else {
-      const newId = Math.max(...users.map((u) => u.id)) + 1;
-      dispatch(addUser({ ...user, id: newId }));
-    }
-    navigate("/users");
-  };
-
-  const handleChange = (field, value) => {
-    setUser((u) => ({ ...u, [field]: value }));
-    setErrors((e) => ({ ...e, [field]: "" })); // Clearing the error on input change
   };
 
   return (
@@ -76,20 +75,25 @@ export default function UserForm() {
         </Link>
       </div>
 
-      <Form className="container mt-3 w-25" onSubmit={handleSubmit}>
+      <Form
+        noValidate
+        validated={validated}
+        className="container mt-3 w-25"
+        onSubmit={handleSubmit}
+      >
         <Group className="mb-3" controlId="firstNameId">
           <Label className="fw-light">First Name</Label>
           <Control
             type="text"
             placeholder="Enter first name"
             value={user.firstName}
-            onChange={(e) => handleChange("firstName", e.target.value)}
+            onChange={(e) =>
+              setUser((u) => ({ ...u, firstName: e.target.value }))
+            }
+            required
+            minLength={3}
           />
-          {errors.firstName && (
-            <Alert variant="danger" className="mt-1">
-              {errors.firstName}
-            </Alert>
-          )}
+          {feedback()}
         </Group>
 
         <Group className="mb-3" controlId="lastNameId">
@@ -98,10 +102,13 @@ export default function UserForm() {
             type="text"
             placeholder="Enter last name"
             value={user.lastName}
+            required
+            minLength={3}
             onChange={(e) =>
               setUser((u) => ({ ...u, lastName: e.target.value }))
             }
           />
+          {feedback()}
         </Group>
 
         <Group className="mb-3" controlId="emailId">
@@ -110,8 +117,11 @@ export default function UserForm() {
             type="email"
             placeholder="Enter Email"
             value={user.email}
+            required
             onChange={(e) => setUser((u) => ({ ...u, email: e.target.value }))}
           />
+          <Feedback>Looks good</Feedback>
+          <Feedback type="invalid">Please enter a valid email</Feedback>
         </Group>
 
         <Group className="mb-3" controlId="usernameId">
@@ -120,10 +130,13 @@ export default function UserForm() {
             type="text"
             placeholder="Enter username"
             value={user.username}
+            required
+            minLength={5}
             onChange={(e) =>
               setUser((u) => ({ ...u, username: e.target.value }))
             }
           />
+          {feedback(5)}
         </Group>
 
         <Group className="mb-3" controlId="passwordId">
@@ -132,10 +145,13 @@ export default function UserForm() {
             type="password"
             placeholder="Enter password"
             value={user.password}
+            required
+            minLength={6}
             onChange={(e) =>
               setUser((u) => ({ ...u, password: e.target.value }))
             }
           />
+          {feedback(6)}
         </Group>
 
         <Group className="mb-3" controlId="roleId">
@@ -150,6 +166,7 @@ export default function UserForm() {
               </option>
             ))}
           </Select>
+          <Feedback>Looks good!</Feedback>
         </Group>
 
         <Group className="d-grid">
