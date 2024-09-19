@@ -22,7 +22,7 @@ export default function UserForm() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const feedback = (minLength) => {
+  const feedback = (minLength = 3) => {
     return (
       <>
         <Feedback>Looks good!</Feedback>
