@@ -1,9 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { users } from "./users";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+// import { users } from "./users";
+
+const BASE_URI = "https://dummyjson.com/users";
+
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+  const response = await axios.get(BASE_URI);
+  return response.data;
+});
 
 const userSlice = createSlice({
   name: "users",
-  initialState: users.users,
+  initialState: {
+    users: [],
+    status: "idle",
+    error: null,
+  },
   reducers: {
     addUser: (state, action) => {
       state.push(action.payload);
@@ -27,6 +39,19 @@ const userSlice = createSlice({
         return state.filter((u) => u.id !== id);
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchUsers.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(fetchUsers.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.users = action.payload;
+    });
+    builder.addCase(fetchUsers.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    });
   },
 });
 
